@@ -1,7 +1,9 @@
+const Redis = require('ioredis');
+
 class OtpService {
 
   constructor(redisClient) {
-    this.redisClient = redisClient;
+    this.redisClient = redisClient || new Redis(); // Assuming a default connection if not provided
   }
 
   generateOtp() {
@@ -14,7 +16,7 @@ class OtpService {
     }
     const otp = this.generateOtp();
     const redisKey = `${type}:${mobile}`;
-    await this.redisSetex(redisKey, 300, otp);
+    await this.redisClient.setex(redisKey, 300, otp);
     return otp;
   }
 
@@ -23,36 +25,12 @@ class OtpService {
       throw new Error('Type, mobile, and OTP are required.');
     }
     const redisKey = `${type}:${mobile}`;
-    const storedOtp = await this.redisGet(redisKey);
+    const storedOtp = await this.redisClient.get(redisKey);
     if (storedOtp === otp) {
       return;
     } else {
       throw new Error('Invalid OTP.');
     }
-  }
-
-  async redisSetex(key, seconds, value) {
-    return new Promise((resolve, reject) => {
-      this.redisClient.setex(key, seconds, value, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  async redisGet(key) {
-    return new Promise((resolve, reject) => {
-      this.redisClient.get(key, (err, value) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(value);
-        }
-      });
-    });
   }
 }
 
