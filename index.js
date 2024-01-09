@@ -1,6 +1,5 @@
-const { sendOTP, verifyOTP } = require('./otpMiddleware');
+const { OtpService } = require('./otpMiddleware');
 
 module.exports = {
-    sendOTP,
-    verifyOTP
+    OtpService,
 }   
