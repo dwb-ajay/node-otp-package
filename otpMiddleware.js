@@ -16,7 +16,7 @@ class OtpService {
     }
     const otp = this.generateOtp();
     const redisKey = `${type}:${mobile}`;
-    await this.redisClient.setex(redisKey, 300, otp);
+    await this.redisClient.setex(redisKey, 30, otp);
     return otp;
   }
 
@@ -26,10 +26,19 @@ class OtpService {
     }
     const redisKey = `${type}:${mobile}`;
     const storedOtp = await this.redisClient.get(redisKey);
-    if (storedOtp === otp) {
-      return;
+    // if (storedOtp === otp) {
+    //   return;
+    // } else {
+    //   throw new Error('Invalid OTP.');
+    // }
+    if(storedOtp){
+      if(storedOtp === otp){
+        return;
+      } else {
+        throw new Error('Invalid OTP!');
+      }
     } else {
-      throw new Error('Invalid OTP.');
+      throw new Error('OTP has expired!');
     }
   }
 }
