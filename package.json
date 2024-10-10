@@ -1,5 +1,9 @@
 {
-  "name": "otp-package",
+  "name": "@dwb-ajay/node-otp-package",
+  "repository": "git://github.com/dwb-ajay.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

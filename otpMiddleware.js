@@ -1,3 +1,4 @@
+
 const Redis = require('ioredis');
 
 class OtpService {
@@ -16,7 +17,8 @@ class OtpService {
     }
     const otp = this.generateOtp();
     const redisKey = `${type}:${mobile}`;
-    await this.redisClient.setex(redisKey, 30, otp);
+    // await this.redisClient.setex(redisKey, 300, otp);
+    await this.redisClient.set(redisKey, otp, "EX", 300);
     return otp;
   }
 
