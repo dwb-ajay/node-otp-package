@@ -17,7 +17,15 @@ class OtpService {
     }
     const otp = this.generateOtp();
     const redisKey = `${type}:${mobile}`;
-    // await this.redisClient.setex(redisKey, 300, otp);
+
+    const keyExists = await this.redisClient.get(redisKey);
+    if(keyExists){
+      const ttl = await this.redisClient.ttl(redisKey);
+      if(ttl>240){
+        throw new Error(`Please try again after ${ttl-240} seconds`);
+      }
+    }
+
     await this.redisClient.set(redisKey, otp, "EX", 300);
     return otp;
   }
